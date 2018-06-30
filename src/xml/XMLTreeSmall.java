@@ -4,9 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
-
-import xml.XMLNode;
-
 import java.util.regex.Matcher;
 import java.util.Stack;
 import java.util.List;
@@ -25,11 +22,8 @@ public class XMLTreeSmall extends XMLTree {
         super(filepath);
     }
 
-    protected void makeTree() {
-        List<XMLTag> withMainTag = new ArrayList<XMLTag>(this.listTags);
-        withMainTag.add(0, new XMLTag("<main>"));
-        withMainTag.add(withMainTag.size(), new XMLTag("</main>"));
-        this.root = recursiveTree(this.root, withMainTag);
+    protected void makeTree(List<XMLTag> listTags) {
+        this.root = recursiveTree(this.root, listTags);
     }
 
     private XMLNode recursiveTree(XMLNode node, List<XMLTag> list) {
@@ -78,26 +72,21 @@ public class XMLTreeSmall extends XMLTree {
         return this.root.equalsRecursive(other.root);
     }
 
-    public Map<List<XMLTag>, Integer> getAllPaths() {
-        Map<List<XMLTag>, Integer> map = new HashMap<List<XMLTag>, Integer>();
-        recurseAllPaths(this.root, map, new LinkedList<XMLTag>());
-        return map;
+    public Set<List<XMLTag>> getAllPaths() {
+        Set<List<XMLTag>> set = new HashSet<List<XMLTag>>();
+        recurseAllPaths(this.root, set, new LinkedList<XMLTag>());
+        return set;
     }
 
-    private void recurseAllPaths(XMLNode node, Map<List<XMLTag>, Integer> map, List<XMLTag> list) {
+    private void recurseAllPaths(XMLNode node, Set<List<XMLTag>> set, List<XMLTag> list) {
         if(!node.hasChild()) {
             list.add(node.getTag());
-            if(!map.containsKey(list)) {
-                map.put(list, 1);
-            }
-            else {
-                map.put(list, map.get(list) + 1);
-            }
+            set.add(list);
         }
         else {
             list.add(node.getTag());
             for(XMLNode child : node.getChildren()) {
-                recurseAllPaths(child, map, new LinkedList<XMLTag>(list));
+                recurseAllPaths(child, set, new LinkedList<XMLTag>(list));
             }
         }
     }
@@ -125,5 +114,10 @@ public class XMLTreeSmall extends XMLTree {
         }
         else
             return false;
+    }
+
+    public String compare(XMLTree other) {
+        // TODO
+        return "";
     }
 }

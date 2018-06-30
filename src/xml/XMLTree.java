@@ -4,65 +4,61 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
-
-import xml.XMLNode;
-
 import java.util.regex.Matcher;
-import java.util.Stack;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.HashMap;
 
 public abstract class XMLTree {
 
     protected XMLNode root;
-    protected List<XMLTag> listTags;
+    protected String name;
     
     public XMLTree(String filepath) {
+        String[] pathnames = filepath.split("/");
+        this.name = pathnames[pathnames.length - 1];
         File file = new File(filepath);
         try {
             Scanner s = new Scanner(file);
-            this.listTags = new ArrayList<XMLTag>();
-            makeList(s);
-            makeTree();
-            this.root = this.root.getChild(0);
+            List<XMLTag> listTags = makeList(s);
+            makeTree(listTags);
             s.close();
-            // printTree();
         }
         catch(FileNotFoundException e) {
             System.out.println("File not found");
         }
     }
 
-    public List<XMLTag> getList() {
-        return new ArrayList<XMLTag>(this.listTags);
+    public String getName() {
+        return this.name;
     }
 
     /**
      * @requires scanner is scanning a valid xml file
      */
-    private void makeList(Scanner s) {
+    private List<XMLTag> makeList(Scanner s) {
+        List<XMLTag> listTags = new ArrayList<XMLTag>();
         Pattern p = Pattern.compile("(<[^(><)]*>)");
         while(s.hasNextLine()) {
             Matcher m = p.matcher(s.nextLine());
             while(m.find()) {
                 XMLTag tag = new XMLTag(m.group(1));
-                this.listTags.add(tag);
+                listTags.add(tag);
             }
         }
+        return listTags;
     }
 
-    protected abstract void makeTree();
+    protected abstract void makeTree(List<XMLTag> listTags);
 
     protected abstract String printTree();
 
     public abstract boolean equals(Object other);
 
-    public abstract Map<List<XMLTag>, Integer> getAllPaths();
+    public abstract Set<List<XMLTag>> getAllPaths();
 
     public abstract boolean containsPath(List<XMLTag> list);
+
+    public abstract String compare(XMLTree other);
 }
