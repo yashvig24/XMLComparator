@@ -63,42 +63,16 @@ public class XMLTreeLarge extends XMLTree {
     public boolean equals(Object other) {
         if(other instanceof XMLTree) {
             XMLTree o = (XMLTree) other;
-            return equalsIterative(o);
+            return this.root.equals(o.root);
         }
         return false;
-    }
-
-    private boolean equalsIterative(XMLTree other) {
-        XMLNode currThis = this.root;
-        XMLNode currOther = other.root;
-        Stack<XMLNode> stackThis = new Stack<XMLNode>();
-        Stack<XMLNode> stackOther = new Stack<XMLNode>();
-        stackThis.push(currThis);
-        stackOther.push(currOther);
-        while(!stackThis.isEmpty() && !stackOther.isEmpty()) {
-            currThis = stackThis.pop();
-            currOther = stackOther.pop();
-            if(!currThis.getTag().equals(currOther.getTag())) 
-                return false;
-            if(currThis.getNumChildren() != currOther.getNumChildren())
-                return false;
-            for(XMLNode child : currThis.getChildren()) {
-                if(!currOther.hasChildWithTag(child.getTag()))
-                    return false;
-                stackThis.push(child);
-            }
-            for(XMLNode child : currOther.getChildren()) {
-                stackOther.push(child);
-            }
-        }
-        return true;
     }
 
     public Set<List<XMLTag>> getAllPaths() {
         return itirateAllPaths();
     }
 
-    private List<XMLTag> pathRootToLeaf(XMLNode node, Map<XMLNode, XMLNode> parents) {
+    private List<XMLTag> pathRootToNode(XMLNode node, Map<XMLNode, XMLNode> parents) {
         Stack<XMLNode> stack = new Stack<XMLNode>();
         List<XMLTag> path = new LinkedList<XMLTag>();
         while(node != null) {
@@ -118,16 +92,18 @@ public class XMLTreeLarge extends XMLTree {
         stack.push(current);
         Map<XMLNode, XMLNode> parents = new HashMap<XMLNode, XMLNode>();
         parents.put(current, null);
+        set.add(pathRootToNode(current, parents));
         while(!stack.isEmpty()) {
             current = stack.pop();
             if(!current.hasChild()) {
-                List<XMLTag> list = pathRootToLeaf(current, parents);
+                List<XMLTag> list = pathRootToNode(current, parents);
                 set.add(list);
             }
             else {
                 for(XMLNode child : current.getChildren()) {
                     stack.push(child);
                     parents.put(child, current);
+                    set.add(pathRootToNode(child, parents));
                 }
             }
         }
@@ -166,7 +142,31 @@ public class XMLTreeLarge extends XMLTree {
     }
 
     public String compare(XMLTree other) {
-        // TODO
-        return "";
+        String missing = "";
+        String extra = "";
+        Set<List<XMLTag>> setThis = getAllPaths();
+        Set<List<XMLTag>> setOther = other.getAllPaths();
+        for(List<XMLTag> path : setThis) {
+            if(!setOther.contains(path))
+                missing += path.get(path.size() - 1).toString() + "\n";
+        }
+        for(List<XMLTag> path : setOther) {
+            if(!setThis.contains(path))
+                extra += path.get(path.size() - 1).toString() + "\n";
+        }
+        if(missing.length() == 0 && extra.length() == 0) {
+            return "Both XML files have the same structure";
+        }
+        else {
+            if(missing.length() != 0) {
+                String missingIntro = "These are the missing tags in " + other.getName() + "\n";
+                missing = missingIntro + missing;
+            }
+            if(extra.length() != 0) {
+                String extraIntro = "These are the extra tags in " + other.getName() + "\n";
+                extra = extraIntro + extra;
+            }
+            return missing + extra;
+        }
     }
 }

@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.LinkedList;
+import java.util.HashSet;
+import java.util.Queue;
+import java.util.Stack;
 
 public class XMLNode implements Comparable<XMLNode> {
 
@@ -13,7 +16,7 @@ public class XMLNode implements Comparable<XMLNode> {
 
     public XMLNode(XMLTag tag) {
         this.tag = tag;
-        this.children = new TreeSet<XMLNode>();
+        this.children = new HashSet<XMLNode>();
     }
 
     public void addChild(XMLTag child) {
@@ -31,7 +34,7 @@ public class XMLNode implements Comparable<XMLNode> {
     }
 
     public Set<XMLNode> getChildren() {
-        return new TreeSet<XMLNode>(this.children);
+        return new HashSet<XMLNode>(this.children);
     }
 
     public XMLTag getTag() {
@@ -102,7 +105,33 @@ public class XMLNode implements Comparable<XMLNode> {
     public boolean equals(Object other) {
         if(!(other instanceof XMLNode))
             return false;
-        return equalsRecursive((XMLNode) other);
+        return equalsIterative((XMLNode) other);
+    }
+
+    public boolean equalsIterative(XMLNode other) {
+        XMLNode currThis = this;
+        XMLNode currOther = other;
+        Stack<XMLNode> stackThis = new Stack<XMLNode>();
+        Stack<XMLNode> stackOther = new Stack<XMLNode>();
+        stackThis.push(currThis);
+        stackOther.push(currOther);
+        while(!stackThis.isEmpty() && !stackOther.isEmpty()) {
+            currThis = stackThis.pop();
+            currOther = stackOther.pop();
+            if(!currThis.getTag().equals(currOther.getTag())) 
+                return false;
+            if(currThis.getNumChildren() != currOther.getNumChildren())
+                return false;
+            for(XMLNode child : currThis.getChildren()) {
+                if(!currOther.hasChildWithTag(child.getTag()))
+                    return false;
+                stackThis.push(child);
+            }
+            for(XMLNode child : currOther.getChildren()) {
+                stackOther.push(child);
+            }
+        }
+        return true;
     }
 
     public int hashCode() {
@@ -111,12 +140,23 @@ public class XMLNode implements Comparable<XMLNode> {
     }
 
     public int compareTo(XMLNode other) {
-        return this.hashCode().compareTo(other.hashCode());
+        return this.hashCode() - other.hashCode();
     }
 
     private int hashCodeIterative() {
-        int level = 1
-        int hash = level*this.tag.hashCode();
+        int level = 1;
+        int hash = 0;
+        Queue<XMLNodeLevel> q = new LinkedList<XMLNodeLevel>();
+        q.add(new XMLNodeLevel(this, level));
+        while(!q.isEmpty()) {
+            XMLNodeLevel current = q.remove();
+            int currLevel = current.getLevel();
+            hash += currLevel*current.getNode().getTag().hashCode();
+            for(XMLNode child : current.getNode().getChildren()) {
+                q.add(new XMLNodeLevel(child, currLevel + 1));
+            }
+        }
+        return hash;
     }
 
     public List<XMLTag> getCommon(XMLNode other) {
@@ -133,10 +173,28 @@ public class XMLNode implements Comparable<XMLNode> {
      */
     public List<XMLNode> getExtraChildren(XMLNode other) {
         List<XMLNode> extras = new LinkedList<XMLNode>();
-        for(XMLNode childOther : other.getChildren()) {
-            if(!this.hasChildWithTag(childOther.getTag())) 
-                extras.add(childOther);
+        for(XMLNode child : this.getChildren()) {
+            if(!other.hasChildWithTag(child.getTag())) 
+                extras.add(child);
         }
         return extras;
+    }
+
+    private class XMLNodeLevel {
+        private XMLNode node;
+        private int level; 
+
+        public XMLNodeLevel(XMLNode node, int level) {
+            this.node = node; 
+            this.level = level;
+        }
+
+        public XMLNode getNode() {
+            return this.node;
+        }
+
+        public int getLevel() {
+            return this.level;
+        }
     }
 }

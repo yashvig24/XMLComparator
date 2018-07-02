@@ -117,7 +117,11 @@ public class XMLTreeSmall extends XMLTree {
     }
 
     public String compare(XMLTree other) {
-        // TODO
+        String result = compareRecursive();
+        return result;
+    }
+
+    private String compareRecursive() {
         return "";
     }
 }

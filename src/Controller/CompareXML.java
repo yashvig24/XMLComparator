@@ -14,16 +14,10 @@ import java.io.FileInputStream;
 public class CompareXML {
 
     private static final int LARGE_FILE_LINES = 1;
-
-    public static void main(String args[]) {
-        // System.out.println(compareXML(args[0], args[1]));
-        // String filepath1 = "../data/test1xml.xml";
-        // String filepath2 = "../data/test1xmlmissing.xml";
-        // System.out.println(compareXML(filepath1, filepath2));
-        XMLTree t1 = new XMLTreeLarge("../data/testdup.xml");
-    }
     
-    private static String compareXML(String filepath1, String filepath2) {
+    public static String compare(String filepath1, String filepath2) {
+        System.out.println(filepath1);
+        System.out.println(filepath2);
         XMLTree t1;
         XMLTree t2;
         int numLines1 = countLines(filepath1);
