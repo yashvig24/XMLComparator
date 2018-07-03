@@ -1,6 +1,6 @@
-package test;
+package controller;
 
-import xml.*;
+import model.*;
 
 import java.util.LinkedList;
 import java.util.Set;

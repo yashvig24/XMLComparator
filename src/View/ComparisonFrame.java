@@ -1,10 +1,9 @@
-package main;
+package view;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import xml.*;
-import test.CompareXML;
+import controller.CompareXML;
 import java.awt.dnd.*;
 import java.awt.datatransfer.*;
 import java.io.*;
