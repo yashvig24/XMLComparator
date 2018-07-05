@@ -23,16 +23,21 @@ class ComparisonFrame extends JFrame {
 
   private JTextArea resultField; 
 
-  private JScrollPane scroll;
-  private JScrollPane scrollfilepath1;
-  private JScrollPane scrollfilepath2;
+  private static final int WWIDTH = 750; 
+  private static final int WHEIGHT = 700;
+  private static final int CBWIDTH = WWIDTH/7;
+  private static final int CBHEIGHT = WHEIGHT/20;
+  private static final int FILETXTBOXH = 60 + WHEIGHT/9;
+  private static final int FILETXTBOXW = WWIDTH/3;
+  private static final int CLRBTNW = FILETXTBOXW/6;
+  private static final int CLRBTNH = FILETXTBOXH/8;
 
   public ComparisonFrame(){
     setTitle("XML Comparison Tool");
-    setSize(380,320);
+    setSize(WWIDTH, WHEIGHT);
     setLocation(new Point(300,200));
     setLayout(null);    
-    setResizable(false);
+    setResizable(true);
 
     initComponent();    
     initEvent();    
@@ -41,29 +46,27 @@ class ComparisonFrame extends JFrame {
   }
 
   private void initComponent() {
-    btnCompare.setBounds(145, 250, 80, 25);
-    btnClearA.setBounds(135, 10, 35, 15);
-    btnClearB.setBounds(310, 10, 35, 15);
+    btnCompare.setBounds(WWIDTH/2 - CBWIDTH/2, WHEIGHT - 50 - CBHEIGHT, CBWIDTH, CBHEIGHT);
+    lblA.setBounds(WWIDTH/25, WHEIGHT/50, WWIDTH/6, WHEIGHT/13);
+    lblB.setBounds(WWIDTH/2 + WWIDTH/25, WHEIGHT/50, WWIDTH/6, WHEIGHT/13);
 
-    lblA.setBounds(20,10,200,20);
-    lblB.setBounds(200,10,200,20);
-    result.setBounds(20, 50, 140, 100);
+    btnClearA.setBounds(WWIDTH/2 - WWIDTH/15, WHEIGHT/50, CLRBTNW, CLRBTNH);
+    btnClearB.setBounds(WWIDTH - WWIDTH/15, WHEIGHT/50, CLRBTNW, CLRBTNH);
+    
+    result.setBounds(WWIDTH/25, WHEIGHT/3, WWIDTH/6, WHEIGHT/13);
 
-    txtboxA =new JTextArea();
-    txtboxA.setBounds(20, 35, 150, 40);
-    scrollfilepath1 = new JScrollPane(txtboxA);    
-    txtboxB =new JTextArea();
-    txtboxB.setBounds(200, 35, 150, 40);
-    scrollfilepath2 = new JScrollPane(txtboxB);
+    txtboxA = new JTextArea();
+    txtboxA.setBounds(WWIDTH/25, WHEIGHT/10, WWIDTH/2 - WWIDTH/10, WWIDTH/5);
+    txtboxA.setLineWrap(true);
+
+    txtboxB = new JTextArea();
+    txtboxB.setBounds(WWIDTH/2 + WWIDTH/25, WHEIGHT/10, WWIDTH/2 - WWIDTH/10, WWIDTH/5);
+    txtboxB.setLineWrap(true);
 
     resultField = new JTextArea();
     resultField.setLineWrap(true);
-    resultField.setBounds(20, 110, 320, 120);
+    resultField.setBounds(WWIDTH/25, WHEIGHT/2 - WHEIGHT/25, WWIDTH - WWIDTH/10, WHEIGHT/3);
     resultField.setEditable(false);
-
-    scroll = new JScrollPane(resultField);
-    scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-    scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 
     add(txtboxB);
     add(txtboxA);
@@ -73,7 +76,7 @@ class ComparisonFrame extends JFrame {
     add(result);
     add(btnClearA);
     add(btnClearB);
-    add(scroll);
+    add(resultField);
 
     new FileDrop( System.out, txtboxA, /*dragBorder,*/ new FileDrop.Listener()
         {   public void filesDropped( java.io.File[] files )
