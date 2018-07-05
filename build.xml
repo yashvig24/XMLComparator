@@ -11,7 +11,7 @@
 
     <target name="jar">
         <mkdir dir="build/jar"/>
-        <jar destfile="build/jar/Compare.jar" basedir="build/classes">
+        <jar destfile="build/jar/CompareMain.jar" basedir="build/classes">
             <manifest>
                 <attribute name="Main-Class" value="view.CompareMain"/>
             </manifest>
@@ -19,7 +19,7 @@
     </target>
 
     <target name="run">
-        <java jar="build/jar/Compare.jar" fork="true"/>
+        <java jar="build/jar/CompareMain.jar" fork="true"/>
     </target>
 
 </project>

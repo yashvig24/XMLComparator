@@ -79,4 +79,8 @@ public class XMLTag implements Comparable<XMLTag> {
     public int compareTo(XMLTag other) {
         return this.tag.compareTo(other.tag);
     }
+
+    public boolean isNotConsideredTag() {
+        return this.tag.charAt(1) == '?';
+    }
 }

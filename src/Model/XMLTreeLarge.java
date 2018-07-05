@@ -28,13 +28,7 @@ public class XMLTreeLarge extends XMLTree {
         i++;
         while(!stack.isEmpty()) {
             currTag = listTags.get(i);
-            if(currTag.isSelfClosingTag()) {
-                currTag = currTag.getOpeningTag();
-                listTags.set(i, currTag);
-                listTags.add(i + 1, currTag.getOppositeTag());
-                i--;
-            }
-            else if(currTag.isOpeningTag()) {
+            if(currTag.isOpeningTag()) {
                 stack.push(new XMLNode(currTag));
             }
             else {
@@ -146,6 +140,9 @@ public class XMLTreeLarge extends XMLTree {
         String extra = "";
         Set<List<XMLTag>> setThis = getAllPaths();
         Set<List<XMLTag>> setOther = other.getAllPaths();
+        if(hasCommon(setThis, setOther)) {
+            return "The two XML files have completely different data";
+        }
         for(List<XMLTag> path : setThis) {
             if(!setOther.contains(path))
                 missing += path.get(path.size() - 1).toString() + "\n";
@@ -168,5 +165,13 @@ public class XMLTreeLarge extends XMLTree {
             }
             return missing + extra;
         }
+    }
+
+    private boolean hasCommon(Set<List<XMLTag>> setThis, Set<List<XMLTag>> setOther) {
+        for(List<XMLTag> path : setThis) {
+            if(setOther.contains(path))
+                return false;
+        } 
+        return true;
     }
 }

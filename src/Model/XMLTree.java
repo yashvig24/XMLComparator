@@ -44,7 +44,11 @@ public abstract class XMLTree {
             Matcher m = p.matcher(s.nextLine());
             while(m.find()) {
                 XMLTag tag = new XMLTag(m.group(1));
-                listTags.add(tag);
+                if(!tag.isNotConsideredTag()) {
+                    listTags.add(tag);
+                    if(tag.isSelfClosingTag())
+                        listTags.add(tag.getOppositeTag());
+                }
             }
         }
         return listTags;

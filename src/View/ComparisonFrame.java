@@ -40,7 +40,7 @@ class ComparisonFrame extends JFrame {
     setLocationRelativeTo(null);
   }
 
-  private void initComponent(){
+  private void initComponent() {
     btnCompare.setBounds(145, 250, 80, 25);
     btnClearA.setBounds(135, 10, 35, 15);
     btnClearB.setBounds(310, 10, 35, 15);
@@ -51,24 +51,20 @@ class ComparisonFrame extends JFrame {
 
     txtboxA =new JTextArea();
     txtboxA.setBounds(20, 35, 150, 40);
-    scrollfilepath1 = new JScrollPane(txtboxA);
-    scrollfilepath1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-    
+    scrollfilepath1 = new JScrollPane(txtboxA);    
     txtboxB =new JTextArea();
     txtboxB.setBounds(200, 35, 150, 40);
     scrollfilepath2 = new JScrollPane(txtboxB);
-    scrollfilepath2.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
     resultField = new JTextArea();
+    resultField.setLineWrap(true);
     resultField.setBounds(20, 110, 320, 120);
     resultField.setEditable(false);
 
     scroll = new JScrollPane(resultField);
-    scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+    scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+    scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 
-
-
-    add(resultField);
     add(txtboxB);
     add(txtboxA);
     add(btnCompare);
@@ -77,6 +73,7 @@ class ComparisonFrame extends JFrame {
     add(result);
     add(btnClearA);
     add(btnClearB);
+    add(scroll);
 
     new FileDrop( System.out, txtboxA, /*dragBorder,*/ new FileDrop.Listener()
         {   public void filesDropped( java.io.File[] files )
@@ -99,7 +96,7 @@ class ComparisonFrame extends JFrame {
                 }   // end for: through each dropped file
             }   // end filesDropped
         }); // end FileDrop.Listener
-    }
+  }
 
     private void initEvent(){
 
